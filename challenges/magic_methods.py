@@ -25,7 +25,7 @@ Tip:
 If you have lines in the docstring (this string) that look like interactive
 Python sessions, you can use the doctest module to run and test this code.
 
-Try: python3 -m doctest -v magic_methods.py
+Try: python -m doctest -v magic_methods.py
 
 See: https://docs.python.org/3/library/doctest.html
 
@@ -47,6 +47,24 @@ class CardDeck:
             for rank in self.ranks
         ]
 
+    def __len__(self):
+        return len(self._cards)
+
+    def __getitem__(self, key):
+        return(self._cards[key])
+
+    def __setitem__(self, key, value):
+        self._cards[key] = value;
+
+import random
+deck = CardDeck()
+print(len(deck))
+print(deck[0])
+print(deck[-1])
+print(random.choice(deck) in list(deck))
+print(random.shuffle(deck)) # reordena la lista de forma aleatoria
+print(deck[0])
+print(deck[-1])
 
 
 """
@@ -54,7 +72,7 @@ Bonus exercise: Polynomial class
 
 Create a class that represents polynomials.  You may need to stretch your memory back to high school maths!
 
-A polynomial loks like
+A polynomial looks like
 
     2(xx) - x + 7
 
@@ -67,7 +85,7 @@ Credit to Moshe Goldstein
 
 class Polynomial:
     def __init__(self, coefficients):
-        pass  # TODO
+        pass
 
     def __str__(self):
         pass  # TODO

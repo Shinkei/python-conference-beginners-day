@@ -15,40 +15,57 @@ of the function
 """
 
 from datetime import datetime
+# from functools import wraps
+
+def timeDecorator(fun):
+    def trace_time():
+        print('calling '+fun.__name__)
+        start_time = datetime.now().microsecond
+        result = fun()
+        print('it takes %d microseconds' % (datetime.now().microsecond - start_time))
+        return result
+    return trace_time
+
+def repeat(times, until_value):
+    def wrap(fun):
+        def repeat_fun():
+            for i in range(times):
+                result = fun()
+                if result == until_value:
+                    break
+        return repeat_fun
+    return wrap
+
+# def repeat(fun):
+#     @wraps(fun)
+#     def repeat_fun(times, until_value):
+#         for i in range(times):
+#             result = fun()
+#             if result == until_value:
+#                 break
+#     return repeat_fun
 
 def my_program():
     main_screen_turn_on()
     if somebody_set_us_up_the_bomb():
         take_off_every_zig()
 
+@timeDecorator
 def main_screen_turn_on():
     print('\n'.join(['*' * 80] * 25))
 
-
-
+@repeat(times=5, until_value=True)
 def somebody_set_us_up_the_bomb():
     if datetime.now().microsecond % 7 == 0:
         return True
     return False
 
-
+@timeDecorator
 def take_off_every_zig():
     for i in range(1, 10001):
         print('Go {}! '.format(i), end='')
 
-"""
-
-Your decorator might end up looking something like this:
-
-@time_this_function
-def main_screen_turn_on():
-    ...
-
-You'll need to find out what a decorator is and how to
-create it in PYthon!  Google for a guide, or try this
-one: http://thecodeship.com/patterns/guide-to-python-function-decorators/
-
-"""
+my_program()
 
 """
 For bonus bonus points:

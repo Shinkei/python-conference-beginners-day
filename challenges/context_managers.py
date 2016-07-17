@@ -8,6 +8,8 @@ some functions to only being called once at a time.
 
 Let's say we use a tempfile to hold the lock:
 '''
+import tempfile
+import os
 
 def hold_lock():
     filename = tempfile.NamedTemporaryFile(delete=False).name
@@ -18,6 +20,23 @@ def hold_lock():
 
 def release_lock(lock_name):
     os.remove(lock_name)
+
+# esta es la estructura de la clase que se usa como context manager, asi, se asegura que se ejecutara algo antes y despues de la ejecucion de un methodo en este caso, que se pasa como parametro
+class ContManLock(object):
+    def __init__(self, fun):
+        self.lockname = hold_lock()
+        self.fun = fun
+        print('init, filelock created: %s' % self.lockname)
+
+    def __enter__(self):
+        return self.fun
+
+    def __exit__(self, type, val, tb):
+        if type is Exception:
+            print('\nWARNING THERE WAS AN EXCEPTION')
+        release_lock(self.lockname)
+        print('lock released')
+        return True
 
 '''
 Incidentally, you've seen in the Python docs that you're meant
@@ -70,3 +89,6 @@ def take_off_every_zig():
             raise Exception('all your base!')
         print('Go {}! '.format(i), end='')
 
+
+with ContManLock(my_program) as fun:
+    fun()
